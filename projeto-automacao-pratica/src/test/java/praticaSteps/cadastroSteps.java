@@ -3,6 +3,7 @@ package praticaSteps;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
@@ -10,10 +11,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.io.FileHandler;
-
-
+import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -22,7 +22,9 @@ import io.cucumber.java.pt.Quando;
 
 public class cadastroSteps {
 
-	private static WebDriver driver;
+	public static  WebDriver driver;
+	
+
 	
 @Dado("que estou acessando a aplicação")
 public void que_estou_acessando_a_aplicação() {
@@ -82,45 +84,47 @@ public void seleciono_salvar() {
 
 @Então("a conta é inserida com sucesso")
 public void a_conta_é_inserida_com_sucesso() {
+	
 	String texto = driver.findElement(By.xpath("//div[@class='alert alert-success']")).getText();
 	Assert.assertEquals("Conta adicionada com sucesso!", texto);
-	File screenshotAs = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-	try {
-		FileHandler.copy(screenshotAs, new File("img1.png"));
-	}catch (IOException e) {
-		e.printStackTrace();
-	}
-	driver.quit();
+	
+	//driver.quit();
 } 
 @Então("sou notificado que o nome da conta é obrigatório")
 public void sou_notificado_que_o_nome_da_conta_é_obrigatório() {
+	 
 	String texto = driver.findElement(By.xpath("//div[@class='alert alert-danger']")).getText();
 	Assert.assertEquals("Informe o nome da conta", texto);
-	File screenshotAs = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-	try {
-		FileHandler.copy(screenshotAs, new File("img2.png"));
-	}catch (IOException e) {
-		e.printStackTrace();
-	}
+	// driver.quit();
+	  
+}
+@Então("^sou notificado que já existe uma conta com esse nome$")
+public void souNotificadoQueJáExisteUmaContaComEsseNome() throws Throwable {
+	 
+	String texto = driver.findElement(By.xpath("//div[@class='alert alert-danger']")).getText();
+	Assert.assertEquals("Já existe uma conta com esse nome!", texto);
+	 //driver.quit();
 }
 
-
-
-//@After
-//public  void Screenshot(Scenario Cenario) {
-//    File file = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-//    try {
-//         FileUtils.copyFile(file, new File("target/screenshot/" + Cenario.getId() + ".jpg"));
-//
-//    } catch (IOException e) {
-//        e.printStackTrace();
-//    }
-//}
-
-@AfterAll
-public static void fecharBrowser() {
-    if (driver != null) {
-        driver.quit();
+@After(order = 1)
+public void Screenshot(Scenario Cenario) {
+	 
+        File file = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(file, new File("target/screenshots/" + Cenario.getId() + ".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        
     }
+}@After(order = 0)
+public void fecharBrowser() {
+   
+        driver.quit();
+      
+   
 }
+
+
 }
+
+
