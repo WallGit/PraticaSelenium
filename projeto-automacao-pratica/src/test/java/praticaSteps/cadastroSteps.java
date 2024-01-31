@@ -119,12 +119,8 @@ public void Screenshot(Scenario Cenario) {
 }@After(order = 0)
 public void fecharBrowser() {
    
-        driver.quit();
-      
-   
+        driver.quit();  
 }
-
-
 }
 
 
